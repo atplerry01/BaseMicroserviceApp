@@ -1,0 +1,9 @@
+C:\Personal\Projects\BaseMicroserviceApp\LoggerClassLib\bin\Debug\netcoreapp2.2\LoggerClassLib.deps.json
+C:\Personal\Projects\BaseMicroserviceApp\LoggerClassLib\bin\Debug\netcoreapp2.2\LoggerClassLib.dll
+C:\Personal\Projects\BaseMicroserviceApp\LoggerClassLib\obj\Debug\netcoreapp2.2\LoggerClassLib.csprojAssemblyReference.cache
+C:\Personal\Projects\BaseMicroserviceApp\LoggerClassLib\obj\Debug\netcoreapp2.2\LoggerClassLib.csproj.CoreCompileInputs.cache
+C:\Personal\Projects\BaseMicroserviceApp\LoggerClassLib\obj\Debug\netcoreapp2.2\LoggerClassLib.AssemblyInfoInputs.cache
+C:\Personal\Projects\BaseMicroserviceApp\LoggerClassLib\obj\Debug\netcoreapp2.2\LoggerClassLib.AssemblyInfo.cs
+C:\Personal\Projects\BaseMicroserviceApp\LoggerClassLib\bin\Debug\netcoreapp2.2\LoggerClassLib.pdb
+C:\Personal\Projects\BaseMicroserviceApp\LoggerClassLib\obj\Debug\netcoreapp2.2\LoggerClassLib.dll
+C:\Personal\Projects\BaseMicroserviceApp\LoggerClassLib\obj\Debug\netcoreapp2.2\LoggerClassLib.pdb
