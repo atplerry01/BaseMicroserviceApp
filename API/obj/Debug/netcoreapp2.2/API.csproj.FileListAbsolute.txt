@@ -1,3 +1,0 @@
-C:\Personal\Projects\BaseMicroserviceApp\API\obj\Debug\netcoreapp2.2\API.csproj.CoreCompileInputs.cache
-C:\Personal\Projects\BaseMicroserviceApp\API\obj\Debug\netcoreapp2.2\API.AssemblyInfoInputs.cache
-C:\Personal\Projects\BaseMicroserviceApp\API\obj\Debug\netcoreapp2.2\API.AssemblyInfo.cs
