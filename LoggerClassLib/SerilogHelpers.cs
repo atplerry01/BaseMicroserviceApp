@@ -60,9 +60,19 @@ namespace LoggerClassLib
                         IndexFormat = "usage-{0:yyyy.MM.dd}"
                     }
                     ))
+                   .WriteTo.Logger(lc => lc
+                    .Filter.ByIncludingOnly(Matching.WithProperty("Activity"))
+                    .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://localhost:9200"))
+                    {
+                        AutoRegisterTemplate = true,
+                        AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6,
+                        IndexFormat = "activity-{0:yyyy.MM.dd}"
+                    }
+                    ))
                 .WriteTo.Logger(lc => lc
                     .Filter.ByExcluding(Matching.WithProperty("ElapsedMilliseconds"))
                     .Filter.ByExcluding(Matching.WithProperty("UsageName"))
+                    .Filter.ByExcluding(Matching.WithProperty("Activity"))
                     .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://localhost:9200"))
                     {
                         AutoRegisterTemplate = true,

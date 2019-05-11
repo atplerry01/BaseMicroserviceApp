@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using API.Extensions;
 using LoggerClassLib.Filters;
 using LoggerClassLib.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
+[assembly: ApiConventionType(typeof(DefaultApiConventions))] // automatically add standard endpoints attributes
 namespace API
 {
     public class Startup
@@ -27,15 +24,28 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            //services.AddAutoMapper();
+
+            services.AddCustomAPIVersioning();
+            services.AddCustomSwagger();
+
+
             services.AddMvc(options =>
             {
-                options.Filters.Add(new TrackPerformanceFilter());
+                options.Filters.Add(new TrackPerformanceFilter()); // performance tracking logger middleware coming from LoggerClassLib
 
-            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-        }
+            })
+            .AddJsonOptions(options => // for Swagger JSON indentation
+                        {
+                options.SerializerSettings.Formatting = Formatting.Indented;
+            })
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider)
         {
             if (env.IsDevelopment())
             {
@@ -47,9 +57,14 @@ namespace API
                 app.UseHsts();
             }
 
+            app.AddCustomSwagger(provider);
+            
+
             app.UseHttpsRedirection();
-            app.UseApiExceptionHandler();  // from custom helper assembly
+            app.UseApiExceptionHandler();  // from custom helper assembly for logging Errors on application level coming from LoggerClassLib
             app.UseMvc();
         }
+
+
     }
 }

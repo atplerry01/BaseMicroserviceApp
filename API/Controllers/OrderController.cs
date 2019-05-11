@@ -7,33 +7,39 @@ using LoggerClassLib.Attributes;
 using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
-    [Route("api/v{version:apiVersion}/[controller]")]
-    [ApiVersion("1.0")]
+    /// <summary>
+    /// Represents a RESTful service of orders.
+    /// </summary>
     [ApiController]
-    public class ValuesController : ControllerBase
+    [ApiVersion("1.0")]
+    [ApiVersion("0.9", Deprecated = true)]
+    [Route("api/[controller]")]
+    public class OrderController : ControllerBase
     {
         // GET api/values
+        /// <summary>
+        /// Get all Orders
+        /// </summary>
+        /// <returns>All available orders</returns>
         [HttpGet]
         [LogUsage("View Get API")]
         public ActionResult<IEnumerable<string>> Get()
         {
 
             ActivityLog<string>.Logger("We got here....");
-            var res = new string[] { "value1", "value2" };
+            var res = new string[] { "value123333333333333", "value23333333333" };
             ActivityLog<string[]>.Logger("Result", res);
             return res;
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        [LogUsage("View GET API By ID")]
-        public ActionResult<string> Get(int id)
-        {
-            return "value";
-        }
-
         // POST api/values
+        /// <summary>
+        /// Create a new Post
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns>Return new created Order</returns>
         [HttpPost]
+        [MapToApiVersion("1.0")]
         public void Post([FromBody] string value)
         {
         }
@@ -44,17 +50,5 @@ namespace API.Controllers
         {
         }
 
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpOptions()]
-        [ApiExplorerSettings(IgnoreApi = true)] // do not show this endpoint...NB: It can be used for Controller as well
-        public void Options(int id)
-        {
-        }
     }
 }
