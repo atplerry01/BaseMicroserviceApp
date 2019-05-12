@@ -1,8 +1,12 @@
-﻿using API.Extensions;
+﻿using API.Data.CodeCamp;
+using API.Data.CodeCamp.Repositories;
+using API.Extensions;
+using AutoMapper;
 using LoggerClassLib.Filters;
 using LoggerClassLib.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
@@ -25,11 +29,16 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
 
-            //services.AddAutoMapper();
+            services.AddDbContext<CampContext>();
+            services.AddScoped<ICampRepository, CampRepository>();
+
+            services.AddAutoMapper();
 
             services.AddCustomAPIVersioning();
             services.AddCustomSwagger();
 
+
+            services.AddHealthChecks();
 
             services.AddMvc(options =>
             {
@@ -58,11 +67,20 @@ namespace API
             }
 
             app.AddCustomSwagger(provider);
-            
+            app.UseHealthChecks("/health");
 
             app.UseHttpsRedirection();
             app.UseApiExceptionHandler();  // from custom helper assembly for logging Errors on application level coming from LoggerClassLib
             app.UseMvc();
+
+           
+
+            app.Run(async (context) =>
+            {
+                await context.Response.WriteAsync(
+                    "Navigate to /health to see the health status or Navigate to / to Swagger Page");
+            });
+
         }
 
 

@@ -29,7 +29,7 @@ namespace LoggerClassLib
         public static void WithSerilogConfiguration(this LoggerConfiguration loggerConfig,
             IServiceProvider provider, string applicationName, IConfiguration config)
         {
-            var name = Assembly.GetEntryAssembly().GetName();
+            var name = Assembly.GetEntryAssembly().GetName();            
 
             loggerConfig
                 .ReadFrom.Configuration(config) // minimum levels defined per project in json files 
@@ -38,22 +38,16 @@ namespace LoggerClassLib
                 .Enrich.WithMachineName()
                 .Enrich.WithProperty("Assembly", $"{name.Name}")
                 .Enrich.WithProperty("Version", $"{name.Version}")
-                //.WriteTo.File(new CompactJsonFormatter(),
-                //    $@"C:\temp\Logs\{applicationName}.json", 
-                //    fileSizeLimitBytes: 1000000, 
-                //    rollOnFileSizeLimit: true, 
-                //    rollingInterval: RollingInterval.Day,
-                //    buffered: true)
                 .WriteTo.Logger(lc => lc
                     .Filter.ByIncludingOnly(Matching.WithProperty("ElapsedMilliseconds"))
                     .WriteTo.MSSqlServer(
-                        connectionString: @"Data Source=.;Initial Catalog=Logging;User Id=sa;Password=Password@1;",
-                        tableName: "PerfLogNew",
+                         connectionString: config["Serilog:Connections:SQLServerCon"],
+                        tableName: config["Serilog:Connections:SQLServerTableName"],
                         autoCreateSqlTable: true,
                         columnOptions: GetSqlColumnOptions()))
                 .WriteTo.Logger(lc => lc
                     .Filter.ByIncludingOnly(Matching.WithProperty("UsageName"))
-                    .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://localhost:9200"))
+                    .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(config["Serilog:Connections:ElasticsearchCon"]))
                     {
                         AutoRegisterTemplate = true,
                         AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6,
@@ -62,7 +56,7 @@ namespace LoggerClassLib
                     ))
                    .WriteTo.Logger(lc => lc
                     .Filter.ByIncludingOnly(Matching.WithProperty("Activity"))
-                    .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://localhost:9200"))
+                    .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(config["Serilog:Connections:ElasticsearchCon"]))
                     {
                         AutoRegisterTemplate = true,
                         AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6,
@@ -73,13 +67,19 @@ namespace LoggerClassLib
                     .Filter.ByExcluding(Matching.WithProperty("ElapsedMilliseconds"))
                     .Filter.ByExcluding(Matching.WithProperty("UsageName"))
                     .Filter.ByExcluding(Matching.WithProperty("Activity"))
-                    .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://localhost:9200"))
+                    .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(config["Serilog:Connections:ElasticsearchCon"]))
                     {
                         AutoRegisterTemplate = true,
                         AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6,
                         IndexFormat = "error-{0:yyyy.MM.dd}"
                     }
-                    ));
+                    ))
+                   .WriteTo.File(new CompactJsonFormatter(),
+                    $@"{config["Serilog:Connections:FileLogPath"]}\{applicationName}.json",
+                    fileSizeLimitBytes: 1000000,
+                    rollOnFileSizeLimit: true,
+                    rollingInterval: RollingInterval.Day,
+                    buffered: true);
         }
 
         private static ColumnOptions GetSqlColumnOptions()
