@@ -1,6 +1,8 @@
 ﻿using API.Data.CodeCamp;
 using API.Data.CodeCamp.Repositories;
+using API.Data.CodeCamp.Services;
 using API.Extensions;
+using API.Services.CodeCamp;
 using AutoMapper;
 using LoggerClassLib.Filters;
 using LoggerClassLib.Middleware;
@@ -31,9 +33,10 @@ namespace API
 
             services.AddDbContext<CampContext>();
             services.AddScoped<ICampRepository, CampRepository>();
+            services.AddScoped<ITalkService, TalkService>();
 
             services.AddAutoMapper();
-
+            
             services.AddCustomAPIVersioning();
             services.AddCustomSwagger();
 
